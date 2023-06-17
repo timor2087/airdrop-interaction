@@ -52,13 +52,16 @@ async function main() {
     const fileLines = fs.readFileSync(fileName, 'utf8').split('\n');
 
     const addressPromises = fileLines.map(async (address, index) => {
-        await sleep(index * 800);
+        await sleep(index * 500);
         const addressInfo = await getAddressInfo(address);
+        const shortenedAddress = shortenAddress(address);
+
         if (!addressInfo) {
             return {
-                balance: "1",
-                transactionCount: "1",
-                lastTransactionTime: "null"
+                Address: shortenedAddress,
+                Balance: '0',
+                Txs: '0',
+                LastDate: 'null',
             };
         }
 
@@ -66,7 +69,6 @@ async function main() {
         const date = new Date(lastTransactionTime);
         const dateString = date.toLocaleDateString();
 
-        const shortenedAddress = shortenAddress(address);
         return {
             Address: shortenedAddress,
             Balance: parseFloat(addressInfo.balance).toFixed(4),
