@@ -2,6 +2,8 @@ import * as fs from 'fs';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
 import PQueue from 'p-queue';
+import chalk from 'chalk';
+import Table from 'cli-table3';
 
 dotenv.config();
 
@@ -48,8 +50,8 @@ function calculateDaysFromNow(date: Date): string {
     now.setHours(0, 0, 0, 0);
     date.setHours(0, 0, 0, 0);
     const diffTime = now.getTime() - date.getTime();
-    const diffDays = diffTime / MS_PER_DAY;
-    return diffDays === 0 ? '今天' : `${diffDays}天前`;
+    const diffDays = Math.round(diffTime / MS_PER_DAY);
+    return diffDays === 0 ? '今天' : `${diffDays}`;
 }
 
 async function main() {
@@ -85,7 +87,36 @@ async function main() {
 
     const addressData = await Promise.all(addressPromises);
 
-    console.table(addressData.filter(Boolean), ['Address', 'Balance', 'Txs', 'DaysFromNow']);
+    // Define table structure
+    const table = new Table({
+        head: ['Address', 'Balance', 'Txs', 'LastDate'],
+        colWidths: [15, 10, 5, 10]
+    });
+
+    // Populate table data
+    addressData.filter(Boolean).forEach(data => {
+        const balance = parseFloat(data.Balance);
+        const coloredBalance = balance < 0.1 ? chalk.red(data.Balance) : data.Balance;
+    
+        let coloredDaysFromNow;
+        if (data.DaysFromNow === '今天' || data.DaysFromNow === 'null') {
+            coloredDaysFromNow = data.DaysFromNow;
+        } else {
+            const daysFromNow = parseInt(data.DaysFromNow);
+            if (daysFromNow >= 14) {
+                coloredDaysFromNow = chalk.magenta(daysFromNow + '天前');
+            } else if (daysFromNow >= 7) {
+                coloredDaysFromNow = chalk.yellow(daysFromNow + '天前');
+            } else {
+                coloredDaysFromNow = daysFromNow + '天前';
+            }
+        }
+    
+        table.push([data.Address, coloredBalance, data.Txs, coloredDaysFromNow]);
+    });
+
+    // Print table
+    console.log(table.toString());
 }
 
 main().catch((error) => {
