@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import { Provider } from 'zksync-web3';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
 
@@ -12,6 +11,9 @@ interface AddressInfo {
     transactionCount: number;
     lastTransactionTime: number;
 }
+
+const MAX_DISPLAY_LENGTH = 9;
+const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 async function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -34,8 +36,6 @@ async function getAddressInfo(address: string): Promise<AddressInfo | undefined>
 }
 
 function shortenAddress(address: string): string {
-    const MAX_DISPLAY_LENGTH = 9;
-
     if (address.length <= MAX_DISPLAY_LENGTH) {
         return address;
     }
@@ -45,9 +45,16 @@ function shortenAddress(address: string): string {
     return `${start}...${end}`;
 }
 
-async function main() {
-    const provider = new Provider('https://mainnet.era.zksync.io');
+function calculateDaysFromNow(date: Date): string {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    date.setHours(0, 0, 0, 0);
+    const diffTime = now.getTime() - date.getTime();
+    const diffDays = diffTime / MS_PER_DAY;
+    return diffDays === 0 ? '今天' : `${diffDays}天前`;
+}
 
+async function main() {
     const fileName = '/home/a186r/dev/airdrop/zksync-era/scripts/address.txt';
     const fileLines = fs.readFileSync(fileName, 'utf8').split('\n');
 
@@ -62,24 +69,26 @@ async function main() {
                 Balance: '0',
                 Txs: '0',
                 LastDate: 'null',
+                DaysFromNow: 'null',
             };
         }
 
         const lastTransactionTime = Number(addressInfo.lastTransactionTime);
         const date = new Date(lastTransactionTime);
-        const dateString = date.toLocaleDateString();
+        const daysFromNow = calculateDaysFromNow(date);
 
         return {
             Address: shortenedAddress,
             Balance: parseFloat(addressInfo.balance).toFixed(4),
             Txs: addressInfo.transactionCount,
-            LastDate: dateString,
+            LastDate: date.toLocaleDateString(),
+            DaysFromNow: daysFromNow,
         };
     });
 
     const addressData = await Promise.all(addressPromises);
 
-    console.table(addressData.filter(Boolean), ['Address', 'Balance', 'Txs', 'LastDate']);
+    console.table(addressData.filter(Boolean), ['Address', 'Balance', 'Txs', 'LastDate', 'DaysFromNow']);
 }
 
 main().catch((error) => {
