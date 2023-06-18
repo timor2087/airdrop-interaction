@@ -17,9 +17,9 @@ interface AddressInfo {
 
 const MAX_DISPLAY_LENGTH = 9;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
-const queue = new PQueue({ interval: 300, intervalCap: 1 });
+const queue = new PQueue({ interval: 320, intervalCap: 1 });
 
-async function getAddressInfo(address: string): Promise<AddressInfo | undefined> {
+async function getAddressInfo(address: string): Promise<AddressInfo | null> {
     const url = `https://www.oklink.com/api/v5/explorer/address/address-summary?chainShortName=ZKSYNC&address=${address}`;
 
     const headers = {
@@ -30,8 +30,8 @@ async function getAddressInfo(address: string): Promise<AddressInfo | undefined>
         const response = await axios.get(url, { headers });
         return response.data.data[0];
     } catch (error) {
-        console.error('Error:', error);
-        throw error;
+        console.error('Error fetching data for address:', address, error);
+        return null;
     }
 }
 
@@ -54,36 +54,38 @@ function calculateDaysFromNow(date: Date): string {
     return diffDays === 0 ? '今天' : `${diffDays}`;
 }
 
-async function main() {
-    const fileName = '/home/a186r/dev/airdrop/zksync-era/scripts/address.txt';
-    const fileLines = fs.readFileSync(fileName, 'utf8').split('\n');
+async function processAddress(address: string) {
+    const addressInfo = await getAddressInfo(address);
+    const shortenedAddress = shortenAddress(address);
 
-    const addressPromises = fileLines.map(address => queue.add(async () => {
-        const addressInfo = await getAddressInfo(address);
-        const shortenedAddress = shortenAddress(address);
-
-        if (!addressInfo) {
-            return {
-                Address: shortenedAddress,
-                Balance: '0',
-                Txs: '0',
-                LastDate: 'null',
-                DaysFromNow: 'null',
-            };
-        }
-
-        const lastTransactionTime = Number(addressInfo.lastTransactionTime);
-        const date = new Date(lastTransactionTime);
-        const daysFromNow = calculateDaysFromNow(date);
-
+    if (!addressInfo) {
         return {
             Address: shortenedAddress,
-            Balance: parseFloat(addressInfo.balance).toFixed(4),
-            Txs: addressInfo.transactionCount,
-            LastDate: date.toLocaleDateString(),
-            DaysFromNow: daysFromNow,
+            Balance: '0',
+            Txs: '0',
+            LastDate: 'null',
+            DaysFromNow: 'null',
         };
-    }));
+    }
+
+    const lastTransactionTime = Number(addressInfo.lastTransactionTime);
+    const date = new Date(lastTransactionTime);
+    const daysFromNow = calculateDaysFromNow(date);
+
+    return {
+        Address: shortenedAddress,
+        Balance: parseFloat(addressInfo.balance).toFixed(4),
+        Txs: addressInfo.transactionCount,
+        LastDate: date.toLocaleDateString(),
+        DaysFromNow: daysFromNow,
+    };
+}
+
+async function main() {
+    const fileName = '/home/a186r/dev/airdrop/zksync-era/scripts/address.txt';
+    const fileLines = (await fs.promises.readFile(fileName, 'utf8')).split('\n');
+
+    const addressPromises = fileLines.map(address => queue.add(() => processAddress(address)));
 
     const addressData = await Promise.all(addressPromises);
 
@@ -104,9 +106,9 @@ async function main() {
         } else {
             const daysFromNow = parseInt(data.DaysFromNow);
             if (daysFromNow >= 14) {
-                coloredDaysFromNow = chalk.magenta(daysFromNow + '天前');
+                coloredDaysFromNow = chalk.red(daysFromNow + '天前');
             } else if (daysFromNow >= 7) {
-                coloredDaysFromNow = chalk.yellow(daysFromNow + '天前');
+                coloredDaysFromNow = chalk.magenta(daysFromNow + '天前');
             } else {
                 coloredDaysFromNow = daysFromNow + '天前';
             }
