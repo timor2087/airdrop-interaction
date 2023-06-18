@@ -91,31 +91,52 @@ async function main() {
 
     // Define table structure
     const table = new Table({
-        head: ['Address', 'Balance', 'Txs', 'LastDate'],
-        colWidths: [15, 10, 5, 10]
+        head: ['Index', 'Address', 'Balance', 'Txs', 'LastDate'],
+        colWidths: [12, 15, 10, 5, 10]
     });
 
+    let totalBalance = 0;
+    let countDaysFromNowGteSeven = 0;
+
     // Populate table data
-    addressData.filter(Boolean).forEach(data => {
+    addressData.filter(Boolean).forEach((data, index) => {
+        // Balance
         const balance = parseFloat(data.Balance);
+        totalBalance += balance; // Add the balance to the total
         const coloredBalance = balance < 0.1 ? chalk.red(data.Balance) : data.Balance;
-    
+
+        // Txs
+        let txs = data.Txs;
+        const coloredTxs = txs > 50 ? chalk.green(data.Txs + '') : data.Txs;
+
+        // DaysFromNow
         let coloredDaysFromNow;
-        if (data.DaysFromNow === '今天' || data.DaysFromNow === 'null') {
+        if (data.DaysFromNow === '今天') {
+            coloredDaysFromNow = chalk.green(data.DaysFromNow);
+        } else if (data.DaysFromNow === 'null'){
             coloredDaysFromNow = data.DaysFromNow;
         } else {
             const daysFromNow = parseInt(data.DaysFromNow);
-            if (daysFromNow >= 14) {
-                coloredDaysFromNow = chalk.red(daysFromNow + '天前');
-            } else if (daysFromNow >= 7) {
-                coloredDaysFromNow = chalk.magenta(daysFromNow + '天前');
+            if (daysFromNow >= 7) {
+                countDaysFromNowGteSeven++; // Increase the count if daysFromNow >= 7
+                if (daysFromNow >= 14) {
+                    coloredDaysFromNow = chalk.red(daysFromNow + '天前');
+                } else {
+                    coloredDaysFromNow = chalk.magenta(daysFromNow + '天前');
+                }
             } else {
                 coloredDaysFromNow = daysFromNow + '天前';
             }
         }
-    
-        table.push([data.Address, coloredBalance, data.Txs, coloredDaysFromNow]);
+
+        // Index
+        const printedIndex = index == 0 ? '0xcA82' : index;
+
+        // Add index to the table
+        table.push([printedIndex, data.Address, coloredBalance, coloredTxs, coloredDaysFromNow]);
     });
+
+    table.push(['Total', '', totalBalance.toFixed(4), '', countDaysFromNowGteSeven]);
 
     // Print table
     console.log(table.toString());
