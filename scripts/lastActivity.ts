@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
+import PQueue from 'p-queue';
 
 dotenv.config();
 
@@ -14,10 +15,7 @@ interface AddressInfo {
 
 const MAX_DISPLAY_LENGTH = 9;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
-
-async function sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const queue = new PQueue({ interval: 300, intervalCap: 1 });
 
 async function getAddressInfo(address: string): Promise<AddressInfo | undefined> {
     const url = `https://www.oklink.com/api/v5/explorer/address/address-summary?chainShortName=ZKSYNC&address=${address}`;
@@ -58,8 +56,7 @@ async function main() {
     const fileName = '/home/a186r/dev/airdrop/zksync-era/scripts/address.txt';
     const fileLines = fs.readFileSync(fileName, 'utf8').split('\n');
 
-    const addressPromises = fileLines.map(async (address, index) => {
-        await sleep(index * 500);
+    const addressPromises = fileLines.map(address => queue.add(async () => {
         const addressInfo = await getAddressInfo(address);
         const shortenedAddress = shortenAddress(address);
 
@@ -84,7 +81,7 @@ async function main() {
             LastDate: date.toLocaleDateString(),
             DaysFromNow: daysFromNow,
         };
-    });
+    }));
 
     const addressData = await Promise.all(addressPromises);
 
