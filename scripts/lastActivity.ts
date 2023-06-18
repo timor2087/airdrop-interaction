@@ -88,7 +88,7 @@ async function main() {
 
     const addressData = await Promise.all(addressPromises);
 
-    console.table(addressData.filter(Boolean), ['Address', 'Balance', 'Txs', 'LastDate', 'DaysFromNow']);
+    console.table(addressData.filter(Boolean), ['Address', 'Balance', 'Txs', 'DaysFromNow']);
 }
 
 main().catch((error) => {
