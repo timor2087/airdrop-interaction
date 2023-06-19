@@ -17,7 +17,7 @@ interface AddressInfo {
 
 const MAX_DISPLAY_LENGTH = 9;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
-const queue = new PQueue({ interval: 320, intervalCap: 1 });
+const queue = new PQueue({ interval: 400, intervalCap: 1 });
 
 async function getAddressInfo(address: string): Promise<AddressInfo | null> {
     const url = `https://www.oklink.com/api/v5/explorer/address/address-summary?chainShortName=ZKSYNC&address=${address}`;
