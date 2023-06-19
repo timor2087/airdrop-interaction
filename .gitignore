@@ -10,5 +10,6 @@ cache
 artifacts
 
 address.txt
+starknet.txt
 .env
 env
