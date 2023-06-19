@@ -130,7 +130,7 @@ async function main() {
         }
 
         // Index
-        const printedIndex = index == 0 ? '0xcA82' : index;
+        const printedIndex = index == 0 ? '🔥' : '🪙 Ledger' + index;
 
         // Add index to the table
         table.push([printedIndex, data.Address, coloredBalance, coloredTxs, coloredDaysFromNow]);
