@@ -1,4 +1,4 @@
-# zksync-era watcher
+# BlockChain Watcher
 
 > *support chains: eth、zksync、starknet*
 
