@@ -11,7 +11,9 @@ async function main() {
     try {
         const fileLines = (await fs.promises.readFile(fileName, 'utf8')).split('\n');
 
-        const addressPromises = fileLines.map(address => queue.add(() => processAddress(address)));
+        const chainname = 'zksync'; // eth
+
+        const addressPromises = fileLines.map(address => queue.add(() => processAddress(chainname, address)));
 
         const addressData = await Promise.all(addressPromises);
 

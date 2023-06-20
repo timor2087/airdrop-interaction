@@ -1,8 +1,8 @@
 import { getAddressInfo, AddressInfo } from '../api/api';
 import { shortenAddress, calculateDaysFromNow } from './format';
 
-export async function processAddress(address: string) {
-    const addressInfo = await getAddressInfo(address);
+export async function processAddress(chainname: string, address: string) {
+    const addressInfo = await getAddressInfo(chainname, address);
 
     if (!addressInfo) {
         return {

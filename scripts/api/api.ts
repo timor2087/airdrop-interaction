@@ -4,7 +4,7 @@ dotenv.config();
 
 const { APIKEY } = process.env;
 
-const OKLINK_API = 'https://www.oklink.com/api/v5/explorer/address/address-summary?chainShortName=eth';
+const BASE_URL = 'https://www.oklink.com/api/v5/explorer/';
 
 export interface AddressInfo {
     balance: string;
@@ -12,14 +12,21 @@ export interface AddressInfo {
     lastTransactionTime: number;
 }
 
-export async function getAddressInfo(address: string): Promise<AddressInfo | null> {
-    const url = `${OKLINK_API}&address=${address}`;
+export async function get(path: string, params: any): Promise<any | null> {
+    const url = `${BASE_URL}${path}`;
 
     try {
-        const response = await axios.get(url, { headers: { 'Ok-Access-Key': APIKEY } });
+        const response = await axios.get(url, {
+            headers: { 'Ok-Access-Key': APIKEY },
+            params: params
+        });
         return response.data.data[0];
     } catch (error) {
-        console.error('Error fetching data for address:', address, error);
+        console.error('Error fetching data:', error);
         return null;
     }
+}
+
+export async function getAddressInfo(chainname: string, address: string): Promise<AddressInfo | null> {
+    return await get('address/address-summary', { chainShortName: chainname, address: address });
 }
