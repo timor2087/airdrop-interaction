@@ -5,13 +5,13 @@ import chalk from 'chalk';
 import { processAddress } from './deal/processAddress';
 
 const fileName = '/home/a186r/dev/airdrop/zksync-era/scripts/assets/address.txt';
-const queue = new PQueue({ interval: 320, intervalCap: 1 });
+const queue = new PQueue({ interval: 450, intervalCap: 1 });
 
 async function main() {
     try {
         const fileLines = (await fs.promises.readFile(fileName, 'utf8')).split('\n');
 
-        const chainname = 'zksync'; // eth
+        const chainname = 'eth'; // eth / zksync
 
         const addressPromises = fileLines.map(address => queue.add(() => processAddress(chainname, address)));
 
