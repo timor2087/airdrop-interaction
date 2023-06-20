@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import PQueue from 'p-queue';
 import chalk from 'chalk';
 import Table from 'cli-table3';
-import { processAddress } from '../deal/processAddress';
+import { processAddress } from '../utils/processAddress';
 
 const queue = new PQueue({ interval: 450, intervalCap: 1 });
 const fileName = '/home/a186r/dev/airdrop/zksync-era/scripts/assets/evm.txt';
