@@ -9,7 +9,7 @@ typechain-types
 cache
 artifacts
 
-address.txt
+evm.txt
 starknet.txt
 .env
 env

@@ -4,7 +4,7 @@ dotenv.config();
 
 const { APIKEY } = process.env;
 
-const BASE_URL = 'https://www.oklink.com/api/v5/explorer/';
+const OKLINK_BASE_URL = 'https://www.oklink.com/api/v5/explorer/';
 
 export interface AddressInfo {
     balance: string;
@@ -12,8 +12,8 @@ export interface AddressInfo {
     lastTransactionTime: number;
 }
 
-export async function get(path: string, params: any): Promise<any | null> {
-    const url = `${BASE_URL}${path}`;
+export async function get(baseUrl: string, path: string, params: any): Promise<any | null> {
+    const url = `${baseUrl}${path}`;
 
     try {
         const response = await axios.get(url, {
@@ -28,5 +28,5 @@ export async function get(path: string, params: any): Promise<any | null> {
 }
 
 export async function getAddressInfo(chainname: string, address: string): Promise<AddressInfo | null> {
-    return await get('address/address-summary', { chainShortName: chainname, address: address });
+    return await get(OKLINK_BASE_URL, 'address/address-summary', { chainShortName: chainname, address: address });
 }

@@ -7,8 +7,8 @@ export async function processAddress(chainname: string, address: string) {
     if (!addressInfo) {
         return {
             Address: shortenAddress(address),
-            Balance: '0',
-            Txs: '0',
+            Balance: 0,
+            Txs: 0,
             LastDate: 'null',
             DaysFromNow: 'null',
         };
