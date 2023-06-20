@@ -1,5 +1,6 @@
 import { printInfo as eth } from './chains/mainnet';
 import { printInfo as zksync } from './chains/zksync';
+import { printInfo as starknet } from './chains/starknet';
 
 async function main() {
     const chain = process.argv[2];
@@ -9,6 +10,9 @@ async function main() {
             break;
         case 'zksync':
             await zksync();
+            break;
+        case 'starknet':
+            await starknet();
             break;
         default:
             console.log('Please specify a chain (eth or zksync) as a command-line argument');
