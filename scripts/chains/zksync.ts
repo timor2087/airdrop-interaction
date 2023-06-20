@@ -107,7 +107,7 @@ async function main() {
 
         // Txs
         let txs = data.Txs;
-        const coloredTxs = txs > 50 ? chalk.green(data.Txs + '') : data.Txs;
+        const coloredTxs = txs > 30 ? chalk.green(data.Txs + '') : data.Txs;
 
         // DaysFromNow
         let coloredDaysFromNow;

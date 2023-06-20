@@ -4,7 +4,6 @@ import * as dotenv from 'dotenv';
 import PQueue from 'p-queue';
 import chalk from 'chalk';
 import Table from 'cli-table3';
-import getAllTransactions from '../src/services/explorer';
 
 dotenv.config();
 
