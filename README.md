@@ -1,5 +1,3 @@
-# BlockChain Watcher
-
 > *support chains: eth、zksync、starknet*
 
 1. Install ts-node
