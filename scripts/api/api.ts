@@ -3,13 +3,13 @@ import * as dotenv from 'dotenv';
 import { ethers } from 'ethers';
 dotenv.config();
 
-const { APIKEY, APIKEY_STARKNET } = process.env;
+const { APIKEY, APIKEY_STARKNET, APIKEY_MAINNET } = process.env;
 
 const OKLINK_BASE_URL = 'https://www.oklink.com/api/v5/explorer/';
 const STARKNET_BASE_URL = 'https://starknet-mainnet.g.alchemy.com/v2/';
-const ETH_BASE_URL = "https://eth-mainnet.g.alchemy.com/v2/yvxZAlxtXSukS6fQ1-_-fhOEujVX1naB";
+const ETH_BASE_URL = "https://eth-mainnet.g.alchemy.com/v2/";
 
-const provider = new ethers.providers.JsonRpcProvider(ETH_BASE_URL);
+const provider = new ethers.providers.JsonRpcProvider(`${ETH_BASE_URL}${APIKEY_MAINNET}`);
 
 export interface AddressInfo {
     balance: string;
