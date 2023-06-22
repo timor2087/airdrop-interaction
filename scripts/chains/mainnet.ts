@@ -25,6 +25,7 @@ export async function printInfo() {
     
         let totalBalance = 0;
         let countDaysFromNowGteSeven = 0;
+        let totalENS = 0;
     
         // Populate table data
         addressData.filter(Boolean).forEach((data, index) => {
@@ -37,6 +38,9 @@ export async function printInfo() {
             let txs = data.Txs;
             const coloredTxs = txs > 30 ? chalk.green(data.Txs + '') : data.Txs;
     
+            if(data.ENS != 'null') {
+                totalENS ++;
+            }
             // DaysFromNow
             let coloredDaysFromNow;
             if (data.DaysFromNow === '今天') {
@@ -64,7 +68,7 @@ export async function printInfo() {
             table.push([printedIndex, data.Address, data.ENS, coloredBalance, coloredTxs, coloredDaysFromNow]);
         });
     
-        table.push(['Total', '', '', totalBalance.toFixed(4), '', countDaysFromNowGteSeven]);
+        table.push(['Total', '', totalENS, totalBalance.toFixed(4), '', countDaysFromNowGteSeven]);
     
         // Print table
         console.log(table.toString());
