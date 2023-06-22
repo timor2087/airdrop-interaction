@@ -1,14 +1,19 @@
 import axios from 'axios';
 import * as dotenv from 'dotenv';
+import { ethers } from 'ethers';
 dotenv.config();
 
 const { APIKEY, APIKEY_STARKNET } = process.env;
 
 const OKLINK_BASE_URL = 'https://www.oklink.com/api/v5/explorer/';
 const STARKNET_BASE_URL = 'https://starknet-mainnet.g.alchemy.com/v2/';
+const ETH_BASE_URL = "https://eth-mainnet.g.alchemy.com/v2/yvxZAlxtXSukS6fQ1-_-fhOEujVX1naB";
+
+const provider = new ethers.providers.JsonRpcProvider(ETH_BASE_URL);
 
 export interface AddressInfo {
     balance: string;
+    ens: string | null;
     transactionCount: number;
     lastTransactionTime: number;
 }
@@ -52,5 +57,15 @@ export async function getFromOKLink(path: string, params: any): Promise<any | nu
 }
 
 export async function getAddressInfo(chainname: string, address: string): Promise<AddressInfo | null> {
-    return await getFromOKLink('address/address-summary', { chainShortName: chainname, address: address });
+    let addressInfo: AddressInfo = await getFromOKLink('address/address-summary', { chainShortName: chainname, address: address });
+    return addressInfo;
+}
+
+export async function getENS(address: string): Promise<string | null> {
+    try {
+        const name = await provider.lookupAddress(address);
+        return name;
+    } catch (error) {
+        return null;
+    }
 }

@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import PQueue from 'p-queue';
 import chalk from 'chalk';
 import Table from 'cli-table3';
-import { processAddress } from '../utils/processAddress';
+import { processAddress, processETHAddress } from '../utils/processAddress';
 
 const queue = new PQueue({ interval: 450, intervalCap: 1 });
 const fileName = '/home/a186r/dev/airdrop/zksync-era/scripts/assets/evm.txt';
@@ -13,14 +13,14 @@ export async function printInfo() {
 
         const chainname = 'eth';
 
-        const addressPromises = fileLines.map(address => queue.add(() => processAddress(chainname, address)));
+        const addressPromises = fileLines.map(address => queue.add(() => processETHAddress(chainname, address)));
 
         const addressData = await Promise.all(addressPromises);
 
         // Create a table with the required structure
         const table = new Table({
-            head: ['Index', 'Address', 'Balance', 'Txs', 'LastDate'],
-            colWidths: [12, 15, 10, 5, 10]
+            head: ['Index', 'Address', 'ENS', 'Balance', 'Txs', 'LastDate'],
+            colWidths: [12, 15, 15, 10, 5, 10]
         });
     
         let totalBalance = 0;
@@ -61,10 +61,10 @@ export async function printInfo() {
             const printedIndex = index == 0 ? '🔥' : '🪙 Ledger' + index;
     
             // Add index to the table
-            table.push([printedIndex, data.Address, coloredBalance, coloredTxs, coloredDaysFromNow]);
+            table.push([printedIndex, data.Address, data.ENS, coloredBalance, coloredTxs, coloredDaysFromNow]);
         });
     
-        table.push(['Total', '', totalBalance.toFixed(4), '', countDaysFromNowGteSeven]);
+        table.push(['Total', '', '', totalBalance.toFixed(4), '', countDaysFromNowGteSeven]);
     
         // Print table
         console.log(table.toString());
