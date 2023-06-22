@@ -28,12 +28,9 @@ export async function processAddress(chainname: string, address: string) {
 
 export async function processETHAddress(chainname: string, address: string) {
     const addressInfo = await getAddressInfo(chainname, address);
-    let ens = await getENS(address);
-
-    if(!ens) ens = 'null';
+    let ens = (await getENS(address)) + '';
 
     if (!addressInfo) {
-
         return {
             Address: shortenAddress(address),
             ENS: ens,
