@@ -13,3 +13,5 @@ evm.txt
 starknet.txt
 .env
 env
+evm.json
+starknet.json
