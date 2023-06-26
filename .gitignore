@@ -9,9 +9,12 @@ typechain-types
 cache
 artifacts
 
-evm.txt
-starknet.txt
+# keys
 .env
 env
+
+# add
+evm.txt
+starknet.txt
 evm.json
 starknet.json
