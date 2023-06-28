@@ -15,7 +15,7 @@ async function main() {
             await starknet();
             break;
         default:
-            console.log('Please specify a chain (eth or zksync) as a command-line argument');
+            console.log('Please specify a chain (eth、zksync or starknet) as a command-line argument');
     }
 }
 
