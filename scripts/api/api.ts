@@ -51,7 +51,7 @@ export async function getFromOKLink(path: string, params: any): Promise<any | nu
         });
         return response.data.data[0];
     } catch (error) {
-        console.error('Error fetching data:', error);
+        // console.error('Error fetching data:', error);
         return null;
     }
 }
