@@ -35,7 +35,7 @@ export async function printInfo() {
     
             // Txs
             let txs = data.Txs;
-            const coloredTxs = txs > 30 ? chalk.green(data.Txs + '') : data.Txs;
+            const coloredTxs = txs > 100 ? chalk.green(data.Txs + '') : data.Txs;
     
             // DaysFromNow
             let coloredDaysFromNow;

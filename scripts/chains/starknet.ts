@@ -38,7 +38,7 @@ export async function printInfo() {
     
         addressData.forEach((data, index) => {
             const txs = parseInt(data.Txs!, 16);
-            const coloredTxs = txs > 30 ? chalk.green(txs + '') : txs;
+            const coloredTxs = txs > 100 ? chalk.green(txs + '') : txs;
             const printedIndex = index <= 24 ? 'Braavos' + (index + 1) : 'Argent' + (index - 24);
             table.push([printedIndex, data.Address, coloredTxs]);
         });
