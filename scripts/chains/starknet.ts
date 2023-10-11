@@ -5,7 +5,7 @@ import Table from 'cli-table3';
 import { getNonce } from '../api/api';
 import { shortenAddress } from '../utils/format';
 
-const queue = new PQueue({ interval: 100, intervalCap: 5 });
+const queue = new PQueue({ interval: 50, intervalCap: 3 });
 
 interface AddressData {
     Address: string;
@@ -24,7 +24,7 @@ async function processAddress(address: string): Promise<AddressData> {
 
 export async function printInfo() {
     try {
-        const fileName = '/home/a186r/dev/airdrop/zksync-era/scripts/assets/starknet.txt';
+        const fileName = './scripts/assets/starknet.txt';
         const fileLines = (await fs.promises.readFile(fileName, 'utf8')).split('\n');
     
         const addressPromises = fileLines.map(address => queue.add(() => processAddress(address)));
@@ -33,13 +33,22 @@ export async function printInfo() {
     
         const table = new Table({
             head: ['Index', 'Address', 'Txs'],
-            colWidths: [12, 15, 5]
+            colWidths: [15, 20, 5]
         });
     
         addressData.forEach((data, index) => {
             const txs = parseInt(data.Txs!, 16);
             const coloredTxs = txs > 100 ? chalk.green(txs + '') : txs;
-            const printedIndex = index <= 24 ? 'Braavos' + (index + 1) : 'Argent' + (index - 24);
+
+            let printedIndex;
+
+            if(index <= 9) {
+                printedIndex = 'Argent-' + (index + 1);
+            } else if(index <=34) {
+                printedIndex = 'Braavos-1-' + (index - 9);
+            } else {
+                printedIndex = 'Braavos-2-' + (index - 34);
+            } 
             table.push([printedIndex, data.Address, coloredTxs]);
         });
     

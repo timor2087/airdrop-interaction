@@ -5,7 +5,7 @@ import Table from 'cli-table3';
 import { processAddress, processETHAddress } from '../utils/processAddress';
 
 const queue = new PQueue({ interval: 450, intervalCap: 1 });
-const fileName = '/home/a186r/dev/airdrop/zksync-era/scripts/assets/evm.txt';
+const fileName = './scripts/assets/evm.txt';
 
 export async function printInfo() {
     try {

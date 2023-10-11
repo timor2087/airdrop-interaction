@@ -4,7 +4,7 @@ const MS_PER_DAY = 1000 * 60 * 60 * 24;
 export function shortenAddress(address: string): string {
     return address.length <= MAX_DISPLAY_LENGTH ? 
         address : 
-        `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+        `${address.substring(0, 8)}...${address.substring(address.length - 4)}`;
 }
 
 export function calculateDaysFromNow(date: Date): string {
