@@ -4,7 +4,7 @@ import { printInfo as starknet } from './chains/starknet';
 
 async function main() {
     const chain = process.argv[2];
-    switch(chain) {
+    switch (chain) {
         case 'eth':
             await eth();
             break;
