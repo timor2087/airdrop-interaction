@@ -22,26 +22,26 @@ export async function printInfo() {
             head: ['Index', 'Address', 'Balance', 'Txs', 'LastDate'],
             colWidths: [12, 15, 10, 5, 10]
         });
-    
+
         let totalBalance = 0;
         let countDaysFromNowGteSeven = 0;
-    
+
         // Populate table data
         addressData.filter(Boolean).forEach((data, index) => {
             // Balance
             const balance = parseFloat(data.Balance + '');
             totalBalance += balance; // Add the balance to the total
             const coloredBalance = balance < 0.1 ? chalk.red(data.Balance + '') : data.Balance;
-    
+
             // Txs
             let txs = data.Txs;
             const coloredTxs = txs > 100 ? chalk.green(data.Txs + '') : data.Txs;
-    
+
             // DaysFromNow
             let coloredDaysFromNow;
             if (data.DaysFromNow === '今天') {
                 coloredDaysFromNow = chalk.green(data.DaysFromNow);
-            } else if (data.DaysFromNow === 'null'){
+            } else if (data.DaysFromNow === 'null') {
                 coloredDaysFromNow = data.DaysFromNow;
             } else {
                 const daysFromNow = parseInt(data.DaysFromNow);
@@ -56,20 +56,30 @@ export async function printInfo() {
                     coloredDaysFromNow = daysFromNow + '天前';
                 }
             }
-    
+
             // Index
-            const printedIndex = index == 0 ? '🔥' : '🪙 Ledger' + index;
-    
+            let printedIndex;
+            // const printedIndex = index == 0 ? '🔥' : '🪙 Ledger' + index;
+            if (index == 0) {
+                printedIndex = '🔥';
+            } else if (index <= 61) {
+                printedIndex = '🪙 Ledger' + index;
+            } else if (index <= 64) {
+                printedIndex = '热 ' + (index - 61);
+            } else {
+                printedIndex = '🪙 ' + (index - 64);
+            }
+
             // Add index to the table
             table.push([printedIndex, data.Address, coloredBalance, coloredTxs, coloredDaysFromNow]);
         });
-    
+
         table.push(['Total', '', totalBalance.toFixed(4), '', countDaysFromNowGteSeven]);
-    
+
         // Print table
         console.log(table.toString());
     }
-    catch(error) {
+    catch (error) {
         console.error(error);
     }
 }
