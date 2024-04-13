@@ -59,7 +59,7 @@ export async function printInfo() {
 
             // Index
             let printedIndex;
-            // const printedIndex = index == 0 ? '🔥' : '🪙 Ledger' + index;
+
             if (index == 0) {
                 printedIndex = '🔥';
             } else if (index <= 61) {
