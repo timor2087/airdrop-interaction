@@ -20,7 +20,7 @@ export async function printInfo() {
         // Create a table with the required structure
         const table = new Table({
             head: ['Index', 'Address', 'Balance', 'Txs', 'LastDate'],
-            colWidths: [12, 15, 10, 5, 10]
+            colWidths: [15, 50, 10, 5, 10]
         });
 
         let totalBalance = 0;
